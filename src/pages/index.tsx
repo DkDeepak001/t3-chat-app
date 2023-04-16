@@ -1,4 +1,4 @@
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function home() {
   const { data: session } = useSession();
@@ -14,7 +14,9 @@ export default function home() {
     <div>
       {!session ? <h2>login</h2> : <h2>sigin in as {session?.user.name}</h2>}
       <h2></h2>
-      <button onClick={handleGooleLogin}>G sigin</button>
+      <button onClick={!session ? handleGooleLogin : (): void => signOut()}>
+        {!session ? `sigin` : `sigin out`}
+      </button>
     </div>
   );
 }
