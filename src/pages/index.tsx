@@ -7,7 +7,6 @@ import { TailSpin } from "react-loader-spinner";
 
 export default function home() {
   const { data: session } = useSession();
-  console.log(session);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSigin = async () => {
