@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { api } from "y/utils/api";
-import { z } from "zod";
+import { FormEvent } from "react";
+import { TRPCError } from "@trpc/server";
 
 const Add = () => {
-  const [email, setEmail] = useState<string>();
-  const { mutate: addFriend } = api.user.addFriend.useMutation();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [email, setEmail] = useState<string>("");
+  const { mutateAsync } = api.user.addFriend.useMutation();
+
+  //handleSubmmit
+  const handleSubmit = async (): Promise<void> => {
     try {
-      await addFriend({ email });
+      const res = await mutateAsync({ email });
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -19,20 +22,20 @@ const Add = () => {
         {" "}
         Add Friend using mail id
       </h2>
-      <form
-        onClick={handleSubmit}
-        className="flex flex-row items-center justify-center gap-2"
-      >
+      <div className="flex flex-row items-center justify-center gap-2">
         <input
           className="rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <button className="mb-2 mr-2 rounded-lg bg-slate-400 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-black ">
+        <button
+          onClick={() => handleSubmit()}
+          className="mb-2 mr-2 rounded-lg bg-slate-400 px-5 py-2.5 text-center text-sm font-medium text-white disabled:cursor-default disabled:hover:bg-black"
+        >
           Add
         </button>
-      </form>
+      </div>
     </div>
   );
 };

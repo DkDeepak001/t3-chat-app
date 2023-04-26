@@ -9,11 +9,11 @@ export default function home() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSigin = async () => {
+  const handleSigin = async (): Promise<void> => {
     try {
       setIsLoading(true);
       await signIn("google");
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error);
     } finally {
       setIsLoading(false);

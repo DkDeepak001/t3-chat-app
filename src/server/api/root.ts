@@ -6,4 +6,4 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
 });
 
-sssexport type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter;
