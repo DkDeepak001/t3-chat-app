@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "y/server/api/trpc";
-import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   addFriend: publicProcedure
@@ -32,10 +31,24 @@ export const userRouter = createTRPCRouter({
     }),
 
   getRequest: publicProcedure.query(async ({ ctx }) => {
-    const a = await ctx.prisma.request.findMany({
+    return await ctx.prisma.request.findMany({
       where: { to: ctx.session?.user.id },
-      select: { From: { select: { name: true, email: true, image: true } } },
+      select: {
+        id: true,
+        From: { select: { name: true, email: true, image: true } },
+      },
     });
-    console.log(a);
   }),
+
+  cancelReq: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.request.delete({
+          where: { id: input.id },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }),
 });
