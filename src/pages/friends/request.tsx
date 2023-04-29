@@ -12,8 +12,19 @@ const Request = () => {
     },
   });
 
-  const handleAcceptReq = async (id: string): Promise<void> => {
+  const { mutateAsync: accept } = api.user.acceptReq.useMutation({
+    onSuccess: async () => {
+      await context.user.invalidate();
+    },
+  });
+
+  const handleAcceptReq = async (
+    delete_id: string,
+    user_id: string
+  ): Promise<void> => {
+    console.log(delete_id, user_id);
     try {
+      await accept({ delete_id, user_id });
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +68,7 @@ const Request = () => {
             </button>
             <button
               className="h-8 w-8 rounded-full bg-green-300"
-              onClick={() => handleAcceptReq(e?.id)}
+              onClick={() => handleAcceptReq(e.id, e.From?.id)}
             >
               ✓
             </button>

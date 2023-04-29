@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "y/server/api/trpc";
 
@@ -35,7 +35,7 @@ export const userRouter = createTRPCRouter({
       where: { to: ctx.session?.user.id },
       select: {
         id: true,
-        From: { select: { name: true, email: true, image: true } },
+        From: { select: { name: true, email: true, image: true, id: true } },
       },
     });
   }),
@@ -50,5 +50,19 @@ export const userRouter = createTRPCRouter({
       } catch (error) {
         console.log(error);
       }
+    }),
+
+  acceptReq: publicProcedure
+    .input(z.object({ delete_id: z.string(), user_id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.request.delete({
+        where: { id: input.delete_id },
+      });
+      return await ctx.prisma.friend.createMany({
+        data: [
+          { authorId: ctx.session?.user.id, friends: input.user_id },
+          { authorId: input.user_id, friends: ctx.session?.user.id },
+        ],
+      });
     }),
 });
