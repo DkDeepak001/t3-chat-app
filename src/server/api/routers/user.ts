@@ -65,4 +65,13 @@ export const userRouter = createTRPCRouter({
         ],
       });
     }),
+
+  getAllFriend: publicProcedure.query(async ({ ctx }) => {
+    return ctx.prisma.friend.findMany({
+      where: { authorId: ctx.session?.user.id },
+      select: {
+        Friend: { select: { name: true, email: true, image: true, id: true } },
+      },
+    });
+  }),
 });

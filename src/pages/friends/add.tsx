@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 const Add = () => {
   const [email, setEmail] = useState<string>("");
   const { mutateAsync } = api.user.addFriend.useMutation();
-  let router = useRouter();
+  const router = useRouter();
   //handleSubmmit
   const handleSubmit = async (): Promise<void> => {
     try {
-      const res = await mutateAsync({ email });
-      console.log(res);
-      // router.push("/dashboard");
+      await mutateAsync({ email });
+      router.push("/dashboard");
     } catch (error) {
       console.log(error);
     } finally {

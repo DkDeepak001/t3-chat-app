@@ -41,7 +41,7 @@ const Request = () => {
   return (
     <div>
       {request?.map((e) => (
-        <div key={e.From?.email} className="ml-5 mt-5 flex flex-row">
+        <div key={e.id} className="ml-5 mt-5 flex flex-row">
           <div>
             <Image
               src={e.From?.image ?? ""}
