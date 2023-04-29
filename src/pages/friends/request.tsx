@@ -1,0 +1,71 @@
+import Image from "next/image";
+import React from "react";
+import { api } from "y/utils/api";
+
+const Request = () => {
+  const context = api.useContext();
+  const { data: request } = api.user.getRequest.useQuery();
+
+  const { mutateAsync: cancel } = api.user.cancelReq.useMutation({
+    onSuccess: async () => {
+      await context.user.getRequest.invalidate();
+    },
+  });
+
+  const handleAcceptReq = async (id: string): Promise<void> => {
+    try {
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCancelReq = async (id: string): Promise<void> => {
+    try {
+      await cancel({ id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div>
+      {request?.map((e) => (
+        <div key={e.From?.email} className="ml-5 mt-5 flex flex-row">
+          <div>
+            <Image
+              src={e.From?.image ?? ""}
+              width={60}
+              height={60}
+              alt={`Profile pic of ${e.From?.name ?? "user "}`}
+              className="mr-3 rounded-full"
+            />
+          </div>
+          <div className="flex flex-col  justify-center">
+            <h2 className="text-base font-semibold text-slate-600">
+              {e.From?.name}
+            </h2>
+            <h4 className="text-sm font-normal text-slate-500">
+              {e.From?.email}
+            </h4>
+          </div>
+          <div className="ml-5 flex flex-row items-center gap-2">
+            <button
+              className="h-8 w-8 rounded-full bg-red-300"
+              onClick={() => handleCancelReq(e?.id)}
+            >
+              x
+            </button>
+            <button
+              className="h-8 w-8 rounded-full bg-green-300"
+              onClick={() => handleAcceptReq(e?.id)}
+            >
+              ✓
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default Request;
