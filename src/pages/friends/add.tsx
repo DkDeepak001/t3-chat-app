@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { api } from "y/utils/api";
-import { FormEvent } from "react";
-import { TRPCError } from "@trpc/server";
+import { useRouter } from "next/navigation";
 
 const Add = () => {
   const [email, setEmail] = useState<string>("");
   const { mutateAsync } = api.user.addFriend.useMutation();
-
+  let router = useRouter();
   //handleSubmmit
   const handleSubmit = async (): Promise<void> => {
     try {
       const res = await mutateAsync({ email });
       console.log(res);
+      // router.push("/dashboard");
     } catch (error) {
       console.log(error);
+    } finally {
+      setEmail("");
     }
   };
   return (

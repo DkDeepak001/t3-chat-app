@@ -58,25 +58,35 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-
-  IncommingRequest IncommingRequest[]
-  Friend           Friend[]
+  reviced       Request[] @relation("to")
+  sent          Request[] @relation("from")
+  friends       Friend[]  
 }
 
-model IncommingRequest {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  incomming User     @relation(fields: [request], references: [id])
-  request   String   @db.ObjectId
-  ownerID   String
+model Request {
+  id   String  @id @default(auto()) @map("_id") @db.ObjectId
+  From User?   @relation("from", fields: [from], references: [id])
+  from String? @db.ObjectId
+
+  To User?   @relation("to", fields: [to], references: [id])
+  to String? @db.ObjectId
+
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+
+  @@unique([from, to])
 }
 
 model Friend {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  Friends   User     @relation(fields: [friend], references: [id])
-  friend    String   @db.ObjectId
-  ownerID   String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  authorId String? @db.ObjectId
+
+  Friend  User?   @relation( fields: [friends], references: [id])
+  friends String? @db.ObjectId
+
   createdAt DateTime? @default(now())
   updateAt  DateTime? @updatedAt
+
+  @@unique([authorId])
 }

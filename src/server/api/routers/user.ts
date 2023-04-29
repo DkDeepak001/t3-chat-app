@@ -12,23 +12,18 @@ export const userRouter = createTRPCRouter({
           where: { email: input.email },
         });
 
+        console.log(isUser);
         if (!isUser) {
-          return new TRPCError({
-            message: "user not found",
-            code: "FORBIDDEN",
-          });
+          return new Error("user not found");
         }
 
-        if (ctx.session?.user.email === input.email)
-          return new TRPCError({
-            message: "You cannout add you as frient",
-            code: "FORBIDDEN",
-          });
-
-        return await ctx.prisma.incommingRequest.create({
+        if (ctx.session?.user.email === input.email) {
+          return new Error("YOu cannot add yourself as friend");
+        }
+        return await ctx.prisma.request.create({
           data: {
-            incomming: { connect: { id: ctx.session?.user.id } },
-            ownerID: isUser.id,
+            From: { connect: { id: ctx.session?.user.id } },
+            To: { connect: { email: input.email } },
           },
         });
       } catch (error) {
@@ -37,11 +32,10 @@ export const userRouter = createTRPCRouter({
     }),
 
   getRequest: publicProcedure.query(async ({ ctx }) => {
-    const getAllRequest = await ctx.prisma.incommingRequest.findMany({
-      where: { ownerID: "6447f05c20a44833c063b185" },
-      include: { incomming: true },
+    const a = await ctx.prisma.request.findMany({
+      where: { to: ctx.session?.user.id },
+      select: { From: { select: { name: true, email: true, image: true } } },
     });
-    console.log(getAllRequest);
-    return getAllRequest;
+    console.log(a);
   }),
 });
