@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "y/server/api/trpc";
-import { prisma } from "y/server/db";
 import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
@@ -26,11 +25,12 @@ export const userRouter = createTRPCRouter({
             code: "FORBIDDEN",
           });
 
-        const addRequestedList = await ctx.prisma.incommingRequest.create({
-          data: { request: ctx.session?.user.id, ownerID: isUser.id },
+        return await ctx.prisma.incommingRequest.create({
+          data: {
+            incomming: { connect: { id: ctx.session?.user.id } },
+            ownerID: isUser.id,
+          },
         });
-
-        return isUser;
       } catch (error) {
         console.log("TRPCError", error);
       }
