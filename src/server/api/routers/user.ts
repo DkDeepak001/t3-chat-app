@@ -1,6 +1,7 @@
 import { string, z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "y/server/api/trpc";
+import { randomUUID } from "crypto";
 
 export const userRouter = createTRPCRouter({
   addFriend: publicProcedure
@@ -55,13 +56,22 @@ export const userRouter = createTRPCRouter({
   acceptReq: publicProcedure
     .input(z.object({ delete_id: z.string(), user_id: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const uuid = randomUUID();
       await ctx.prisma.request.delete({
         where: { id: input.delete_id },
       });
       return await ctx.prisma.friend.createMany({
         data: [
-          { authorId: ctx.session?.user.id, friends: input.user_id },
-          { authorId: input.user_id, friends: ctx.session?.user.id },
+          {
+            authorId: ctx.session?.user.id,
+            friends: input.user_id,
+            messageId: uuid,
+          },
+          {
+            authorId: input.user_id,
+            friends: ctx.session?.user.id,
+            messageId: uuid,
+          },
         ],
       });
     }),
@@ -70,6 +80,7 @@ export const userRouter = createTRPCRouter({
     return ctx.prisma.friend.findMany({
       where: { authorId: ctx.session?.user.id },
       select: {
+        messageId: true,
         Friend: { select: { name: true, email: true, image: true, id: true } },
       },
     });

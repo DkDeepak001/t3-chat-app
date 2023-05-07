@@ -25,21 +25,22 @@ type selectedFriend = {
 const Dashboard = () => {
   const [message, setMessage] = useState<string>("");
   const [selectedFriend, setSelectedFriend] = useState<selectedFriend>();
-
+  const [messageId, setMessageId] = useState<string>("");
   const [receivedMessage, setReceivedMessage] = useState<DocumentData[]>();
 
   const { data: getAllFriend } = api.user.getAllFriend.useQuery();
   const user = useSession();
 
-  const handleSelectFriend = (data: selectedFriend) => {
+  const handleSelectFriend = (data: selectedFriend, id: string) => {
+    setMessageId(id);
     setSelectedFriend(data);
   };
   useEffect(() => {
-    if (!getAllFriend) return;
+    if (!messageId) return;
 
     const queryMessage = query(
       collection(db, "messages"),
-      where("messageId", "==", getAllFriend[0]?.messageId)
+      where("messageId", "==", messageId)
     );
     console.log("queryMessage:", queryMessage);
     const unsubscribe = onSnapshot(queryMessage, (snapshot) => {
@@ -86,7 +87,7 @@ const Dashboard = () => {
             className={`mx-2 mt-5 flex flex-row rounded-lg py-3 pl-5 ${
               selectedFriend?.id === e?.Friend?.id ? "bg-slate-300" : ""
             }`}
-            onClick={() => handleSelectFriend(e?.Friend)}
+            onClick={() => handleSelectFriend(e?.Friend, e.messageId)}
           >
             <div>
               <Image
@@ -109,7 +110,7 @@ const Dashboard = () => {
         ))}
       </div>
       <div className="w-4/5 ">
-        {!selectedFriend?.id ? (
+        {!messageId ? (
           <h2 className=""> select user to sent message</h2>
         ) : (
           <div>
