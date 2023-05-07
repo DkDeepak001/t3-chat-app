@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import { LoaderIcon } from "react-hot-toast";
 import { api } from "y/utils/api";
 
 const Request = () => {
@@ -38,8 +39,16 @@ const Request = () => {
     }
   };
 
+  if (!request)
+    return (
+      <div className="flex h-screen items-center justify-center bg-black ">
+        <LoaderIcon style={{ height: 50, width: 50 }} />
+      </div>
+    );
+
   return (
     <div>
+      {request?.length === 0 && <p>no request found</p>}
       {request?.map((e) => (
         <div key={e.id} className="ml-5 mt-5 flex flex-row">
           <div>

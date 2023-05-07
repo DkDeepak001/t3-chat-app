@@ -17,6 +17,7 @@ const Add = () => {
       setEmail("");
     }
   };
+
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-5">
       <h2 className="text-3xl font-bold text-slate-600">

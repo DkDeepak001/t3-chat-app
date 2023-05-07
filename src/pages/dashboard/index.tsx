@@ -14,6 +14,7 @@ import {
   where,
 } from "@firebase/firestore";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 type selectedFriend = {
   id: string;
@@ -81,6 +82,18 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen w-screen flex-row">
       <div className="w-1/5 border-r-[1px] border-black/30">
+        <div className=" mt-5 flex justify-evenly">
+          <Link href="/friends/add">
+            <button className="rounded-full bg-slate-500 px-3 py-2 text-white">
+              Add Friend
+            </button>
+          </Link>
+          <Link href="/friends/request">
+            <button className="rounded-full bg-slate-500 px-3 py-2 text-white">
+              Request
+            </button>
+          </Link>
+        </div>
         {getAllFriend?.map((e) => (
           <div
             key={e.Friend?.id}
